@@ -1,0 +1,55 @@
+job_name: 'logo recognizion'
+job_type: ""
+debug: true
+namespace: aiplatform
+distribute_type: Null  # Null, horovod, tf-ps, mpi
+image: "ai-image.jd.com/neuhub-engine/caffe:logo191231-ubuntu16.04-py2.7-cuda8.0-cudnn6.0-gpu"
+resource_spec:
+  worker:
+    count: 1
+    cpu: 4
+    mem: 2  # 2G
+    gpu: 1
+running_spec:
+  source_code:
+    storage_mode: 'OSSFile'
+    storage_conf:
+      # path: "s3://jdai009/yanghaibo1/pai/example/caffe-logo_recognition/"
+      path: s3://jdai009/yanghaibo1/pai/example/caffe-logo_recognition/1af4b85745b74e4b8e99559ebe6b9223.zip
+      access_key: "1167CBDAF257AC6EFE0F62F546768F26"
+      secret_key: "9D7C808E2B48279545F5ECD27B3CED59"
+  envs: []
+  cmd: "python create_featureDB.py"
+  normal_args: []
+    # - name: 'lr'
+    #   value: 0.001
+  input_args:
+    - name: 'disturbset_dir' 
+      data_conf:
+        storage_mode: 'OSSFile'
+        storage_conf:
+          path: "s3://jdai009/yanghaibo1/pai/dataset/logo_recognition/disturbset/"
+          access_key: '1167CBDAF257AC6EFE0F62F546768F26'
+          secret_key: '9D7C808E2B48279545F5ECD27B3CED59'
+    - name: 'featureset_dir'
+      data_conf:
+        storage_mode: 'OSSFile'
+        storage_conf:
+          path: "s3://jdai009/yanghaibo1/pai/dataset/logo_recognition/"
+          access_key: '1167CBDAF257AC6EFE0F62F546768F26'
+          secret_key: '9D7C808E2B48279545F5ECD27B3CED59'
+    - name: 'featuremodel_dir'
+      data_conf:
+        storage_mode: 'OSSFile'
+        storage_conf:
+          path: "s3://jdai009/yanghaibo1/pai/dataset/logo_recognition/feature_model/"
+          access_key: '1167CBDAF257AC6EFE0F62F546768F26'
+          secret_key: '9D7C808E2B48279545F5ECD27B3CED59'
+  output_args:
+    - name: 'output_dir'
+      data_conf:
+        storage_mode: 'OSSFile'
+        storage_conf:
+          path: "s3://jdai009/yanghaibo1/pai/output/"
+          access_key: '1167CBDAF257AC6EFE0F62F546768F26'
+          secret_key: '9D7C808E2B48279545F5ECD27B3CED59'

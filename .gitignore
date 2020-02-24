@@ -1,0 +1,10 @@
+*.py[cod]
+*.so
+*.egg
+*.egg-info
+*env/
+*.idea/
+dist
+build
+db.sqlite3
+.ipynb_checkpoints/*

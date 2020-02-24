@@ -1,0 +1,13 @@
+[Aves2Server]
+    host = ''
+    api_token = ''
+
+[UserInfo]
+    username = ''
+    namespace = ''
+
+[StorageConf]
+    [[S3]]
+        S3Endpoint = ''
+        S3AccessKeyId = ''
+        S3SecretAccessKey = ''
