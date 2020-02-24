@@ -63,6 +63,9 @@ def parse_data_path(path):
         else:
             code_dir = path
             filename = ''
+    else:
+        code_dir = path
+        filename = ''
     return code_dir, filename
 
 def check_code_spec(code_spec):
@@ -73,6 +76,8 @@ def check_code_spec(code_spec):
     data['path'] = path
     # TODO
     data['filename'] = filename
+    if data['type'] == 'K8SPVC':
+        data['pvc'] = code_spec['storage_conf']['pvc']
     return data
 
 def check_data_spec(data_spec):
@@ -86,6 +91,8 @@ def check_data_spec(data_spec):
             'path': i_path,
             'filename': ''
         }
+        if data[i_name]['type'] == 'K8SPVC':
+            data[i_name]['pvc'] = input_i['data_conf']['storage_conf']['pvc']
     return data
 
 def parse_conf(job_data):
