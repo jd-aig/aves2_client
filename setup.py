@@ -25,6 +25,6 @@ setup(
         'aves2=aves2_client.scripts._common:aves2_main',
     ]},
     data_files=[
-        ('/etc/aves2/', ['aves2.cfg']),
+        ('/etc/aves2/', ['aves2.cfg.example']),
     ],
 )
