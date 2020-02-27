@@ -10,13 +10,13 @@ from aves2_client.settings import aves2_cfg
 AVES2_HOST = aves2_cfg['Aves2Server']['host']
 AVES2_TOKEN = aves2_cfg['Aves2Server']['api_token']
 AVES2_APIS = {
-    'list_job': '/aves_job/',
-    'create_job': '/aves_job/',
-    'get_job': '/aves_job/{jobid}',
-    'start_job': '/aves_job/{jobid}/start_job/',
-    'cancel_job': '/aves_job/{jobid}/cancel_job/',
-    'log_job': '/aves_job/{jobid}/logs/',
-    'delete_job': '/aves_job/{jobid}/',
+    'list_job': '/api/aves_job/',
+    'create_job': '/api/aves_job/',
+    'get_job': '/api/aves_job/{jobid}',
+    'start_job': '/api/aves_job/{jobid}/start_job/',
+    'cancel_job': '/api/aves_job/{jobid}/cancel_job/',
+    'log_job': '/api/aves_job/{jobid}/logs/',
+    'delete_job': '/api/aves_job/{jobid}/',
 }
 
 HEADERS = {
