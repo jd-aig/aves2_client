@@ -6,7 +6,7 @@ from aves2_client.version import aves2_version
 
 
 setup(
-    name='aves2',
+    name='aves2_client',
     version=aves2_version(),
     description='Command Line Interface for Aves2',
     author='Yang Haibo',
