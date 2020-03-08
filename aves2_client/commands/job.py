@@ -78,6 +78,9 @@ def check_code_spec(code_spec):
     data['filename'] = filename
     if data['type'] == 'K8SPVC':
         data['pvc'] = code_spec['storage_conf']['pvc']
+    if data['type'] == 'HostPath':
+        # TODO: replace with config items
+        data['path'] = data['path'].replace('/export/', '/export/cfs/cfs_cvpmlp/users/')
     return data
 
 def check_data_spec(data_spec):
@@ -93,6 +96,9 @@ def check_data_spec(data_spec):
         }
         if data[i_name]['type'] == 'K8SPVC':
             data[i_name]['pvc'] = input_i['data_conf']['storage_conf']['pvc']
+        if data[i_name]['type'] == 'HostPath':
+            # TODO: replace with config items
+            data[i_name]['path'] = data[i_name]['path'].replace('/export/', '/export/cfs/cfs_cvpmlp/users/')
     return data
 
 def parse_conf(job_data):
@@ -149,7 +155,8 @@ def create_job(args):
     except FileNotFoundError:
         print_warning('Job config file is not exist')
         return
-    except Exception:
+    except Exception as e:
+        print(e)
         print_warning('Invalid config file')
         return
     finally:
