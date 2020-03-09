@@ -15,9 +15,11 @@ signal.signal(signal.SIGTERM, handler)
 
 
 def aves2_main():
+    utils.prep_folders()
+    utils.init_config()
+
     from aves2_client.args.job_args import aves2_parser as  parser
 
-    utils.prep_folders()
     args = parser.parse_args()
     logger.log2console(lvl='INFO')
     if not hasattr(args, 'func'):

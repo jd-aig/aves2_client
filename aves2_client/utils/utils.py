@@ -7,6 +7,7 @@ from datetime import datetime
 import shutil
 import itertools
 import time
+from pkg_resources import Requirement, resource_filename
 
 if os.name == 'nt':
     # TODO: This is no pwd module on Win OS
@@ -79,6 +80,15 @@ def sleep_and_print(sec, sign='.', count=6):
         print("%s" % sign * (i+1), end="\r")
         time.sleep(duration)
     print("%s" % ' ' * (count+1), end="\r")
+
+def init_config():
+    path = resource_filename(
+            Requirement.parse("aves2_client"),
+            "etc/aves2/aves2.cfg.example"
+           )
+    target = os.path.join(dotdir(), 'aves2.cfg')
+    if not os.path.exists(target):
+        shutil.copy(path, target)
 
 
 class DfInfo:
