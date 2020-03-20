@@ -15,7 +15,7 @@ aves2_cfg = aves2_cfg.dict()
 logger = logging.getLogger(__name__)
 
 JOB_STATUS_MAP = {
-    'STARTING': "\033[1;33m开始\033[0m",
+    'STARTING': "\033[1;33m启动中\033[0m",
     'RUNNING': "\033[1;34m运行中\033[0m",
     'FINISHED': "\033[0;32m运行成功\033[0m",
     'FAILURE': "\033[1;31m运行失败\033[0m",
@@ -64,8 +64,14 @@ def parse_data_path(path):
             code_dir = path
             filename = ''
     else:
-        code_dir = path
-        filename = ''
+        if os.path.basename(path).split('.')[-1] in ['zip', 'tar', 'gz']:
+            code_dir = os.path.join(os.path.dirname(path), '')
+            filename = os.path.basename(path)
+        else:
+            code_dir = path
+            filename = ''
+        #code_dir = path
+        #filename = ''
     return code_dir, filename
 
 def check_code_spec(code_spec):
