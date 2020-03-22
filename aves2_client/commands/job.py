@@ -31,6 +31,7 @@ def check_cmd_args(running_spec):
     data['args'] = args
     return data
 
+
 def check_resource_spec(distribute_type, resource_spec, cmd_info):
     cmd = cmd_info['cmd']
     args = cmd_info['args']
@@ -55,6 +56,7 @@ def check_resource_spec(distribute_type, resource_spec, cmd_info):
         conf['args'] = args
     return resource_spec
 
+
 def parse_data_path(path):
     if path.startswith('s3://'):
         if os.path.basename(path).split('.')[-1] in ['zip', 'tar', 'gz']:
@@ -74,6 +76,21 @@ def parse_data_path(path):
         #filename = ''
     return code_dir, filename
 
+
+def get_nfs_path(path):
+    df_info = [i.strip('\n').split() for i in os.popen("df | awk '{print $1, $6}'").readlines()]
+    export_path = None
+    for source, mount in df_info:
+        if ':' not in source:
+            continue
+        if path.startswith(mount):
+            export_path = os.path.join(source, path.split(mount)[1].lstrip('/'))
+    if not export_path:
+        raise Exception(f'{path} is not a valid nfs path')
+    else:
+        return export_path
+
+
 def check_code_spec(code_spec):
     data = {}
     data['type'] = code_spec['storage_mode']
@@ -85,9 +102,26 @@ def check_code_spec(code_spec):
     if data['type'] == 'K8SPVC':
         data['pvc'] = code_spec['storage_conf']['pvc']
     if data['type'] == 'HostPath':
-        # TODO: replace with config items
-        data['path'] = data['path'].replace('/export/', '/export/cfs/cfs_cvpmlp/users/')
+        data['path'] = get_nfs_path(data['path'])
     return data
+
+
+def check_log_spec(code_spec):
+    if not code_spec:
+        return {}
+    data = {}
+    data['type'] = code_spec['storage_mode']
+    code_path = code_spec['storage_conf']['path']
+    path, filename = parse_data_path(code_path)
+    data['path'] = path
+    # TODO
+    data['filename'] = filename
+    if data['type'] == 'K8SPVC':
+        data['pvc'] = code_spec['storage_conf']['pvc']
+    if data['type'] == 'HostPath':
+        data['path'] = get_nfs_path(data['path'])
+    return data
+
 
 def check_data_spec(data_spec):
     data = {}
@@ -103,9 +137,9 @@ def check_data_spec(data_spec):
         if data[i_name]['type'] == 'K8SPVC':
             data[i_name]['pvc'] = input_i['data_conf']['storage_conf']['pvc']
         if data[i_name]['type'] == 'HostPath':
-            # TODO: replace with config items
-            data[i_name]['path'] = data[i_name]['path'].replace('/export/', '/export/cfs/cfs_cvpmlp/users/')
+            data[i_name]['path'] = get_nfs_path(data[i_name]['path'])
     return data
+
 
 def parse_conf(job_data):
     post_data = {}
@@ -151,7 +185,11 @@ def parse_conf(job_data):
     # Note: outputspec
     post_data['output_spec'] = check_data_spec(job_data['running_spec']['output_args'])
 
+    # Note: log spec
+    post_data['log_dir'] = check_log_spec(job_data['running_spec'].get('log_dir', {}))
+
     return post_data
+
 
 def create_job(args):
     job_conf = args.job_conf
@@ -168,12 +206,17 @@ def create_job(args):
     finally:
         f.close()
 
-    post_data = parse_conf(job_data)
+    try:
+        post_data = parse_conf(job_data)
+    except Exception as e:
+        raise
+
     rt = job_api.create_job(post_data)
     if rt.status_code == 201:
         print_success('JOB Created: %s' % rt.json()['id'])
     else:
         print_warning('Fail to create job: %s' % rt.text)
+
 
 def list_jobs(args):
     rt = job_api.list_job()
@@ -196,6 +239,7 @@ def list_jobs(args):
     else:
         print_warning('Fail to get job list')
 
+
 def rerun_job(args):
     job_id = args.job_id
     rt = job_api.start_job(job_id)
@@ -205,8 +249,10 @@ def rerun_job(args):
     else:
         print_warning('Fail to star job: {}'.format(rt.text))
 
+
 def show_job(args):
     pass
+
 
 def delete_job(args):
     job_id = args.job_id
@@ -215,6 +261,7 @@ def delete_job(args):
         print_success('JOB is deleted')
     else:
         print_warning('Fail to delete job: {}'.format(rt.text))
+
 
 def cancel_job(args):
     job_id = args.job_id
@@ -225,6 +272,7 @@ def cancel_job(args):
     else:
         print_warning('Fail to stop job')
 
+
 def log_job(args):
     job_id = args.job_id
     rt = job_api.log_job(job_id)
@@ -233,4 +281,3 @@ def log_job(args):
             print(line)
     else:
         print_warning('Fail to get job log')
-
