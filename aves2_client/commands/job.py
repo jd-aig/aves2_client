@@ -129,10 +129,11 @@ def check_data_spec(data_spec):
         i_name = input_i['name']
         i_type = input_i['data_conf']['storage_mode']
         i_path = input_i['data_conf']['storage_conf']['path']
+        i_path, i_filename = parse_data_path(i_path)
         data[i_name] = {
             'type': i_type,
             'path': i_path,
-            'filename': ''
+            'filename': i_filename
         }
         if data[i_name]['type'] == 'K8SPVC':
             data[i_name]['pvc'] = input_i['data_conf']['storage_conf']['pvc']
