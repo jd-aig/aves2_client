@@ -4,7 +4,7 @@
 
 [UserInfo]
     username = ''
-    namespace = ''
+    namespace = 'default'  # 仅当Aves2部署在Kubernetes集群时有效
 
 [StorageConf]
     [[S3]]

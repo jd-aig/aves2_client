@@ -101,8 +101,10 @@ def check_code_spec(code_spec):
     data['filename'] = filename
     if data['type'] == 'K8SPVC':
         data['pvc'] = code_spec['storage_conf']['pvc']
-    if data['type'] == 'HostPath':
+    if data['type'] == 'NFSPath':
         data['path'] = get_nfs_path(data['path'])
+    if data['type'] == 'HostPath':
+        pass
     return data
 
 
@@ -118,8 +120,10 @@ def check_log_spec(code_spec):
     data['filename'] = filename
     if data['type'] == 'K8SPVC':
         data['pvc'] = code_spec['storage_conf']['pvc']
-    if data['type'] == 'HostPath':
+    if data['type'] == 'NFSPath':
         data['path'] = get_nfs_path(data['path'])
+    if data['type'] == 'HostPath':
+        pass
     return data
 
 
@@ -137,14 +141,17 @@ def check_data_spec(data_spec):
         }
         if data[i_name]['type'] == 'K8SPVC':
             data[i_name]['pvc'] = input_i['data_conf']['storage_conf']['pvc']
-        if data[i_name]['type'] == 'HostPath':
+        if data[i_name]['type'] == 'NFSPath':
             data[i_name]['path'] = get_nfs_path(data[i_name]['path'])
+        if data[i_name]['type'] == 'HostPath':
+            pass
     return data
 
 
 def parse_conf(job_data):
     post_data = {}
 
+    post_data['need_report'] = job_data.get('need_report', False)
     post_data['name'] = job_data.get('job_name', '')
     post_data['debug'] = job_data.get('debug', False)
     post_data['namespace'] = job_data.get('namespace', 'default')
