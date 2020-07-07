@@ -43,40 +43,42 @@ http://&lt;AVES2 HOST&gt;/aves2/center/token/
 ```
 # aves2 example hostpath
 
-job_name: 'Job名称'
-namespace: default
-distribute_type: Null  # 可选值: Null, HOROVOD, TF_PS
-image: '运行任务的镜像‘
+job_name: 'hostpath demo'
+debug: true
+distribute_type: Null  # Null, HOROVOD, TF_PS
+image: <镜像地址>
 resource_spec:
   worker:
     count: 1
     cpu: 4
-    mem: 2  # 单位G
-    gpu: 1  # 如果不需要GPU填写0
+    mem: 2  # 2G
+    gpu: 1
 running_spec:
-  source_code:
+  source_code:                          # 源代码相关配置
     storage_mode: HostPath
     storage_conf:
-      path: /export/<username>/code/  # Jupyter容器内路径
-  envs: []
-  cmd: "python3 main.py"
-  normal_args:  # 普通类型的参数
-    - name: lr
-      value: 0.01
-    - name: batchsize
-      value: 10
-  input_args:  # 输入数据参数
+      path: <代码所在本地路径>
+  envs: []                              # 用户可以设置环境变量
+  cmd: "python3 main.py"                # 启动命令
+  normal_args: []                       # 超参数
+    # - name: batch-size
+    #   value: 64
+    # - name: epochs
+    #   value: 10
+    # - name: lr
+    #   value: 0.01
+  input_args:                           # 输入类参数
     - name: data-dir
       data_conf:
         storage_mode: HostPath
         storage_conf:
-          path: /export/<username>/data/  # Jupyter容器内路径
-  output_args:  # 输出数据参数
+          path: <输入数据集的本地路径>
+  output_args:                          # 输出类参数
     - name: output-dir
       data_conf:
         storage_mode: HostPath
         storage_conf:
-          path: /export/<username>/output/  # Jupyter容器内路径
+          path: <输出本地路径>
 ```
 
 ```

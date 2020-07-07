@@ -14,7 +14,7 @@ running_spec:
     storage_mode: K8SPVC
     storage_conf:
       pvc: <PVC NAME>
-      path: <代码所在路径>
+      path: <代码所在的子路径>
   envs: []                              # 用户可以设置环境变量
   cmd: "python3 main.py"                # 启动命令
   normal_args: []                       # 超参数
@@ -30,7 +30,7 @@ running_spec:
         storage_mode: K8SPVC
         storage_conf:
           pvc: <PVC NAME>
-          path: <输入数据所在路径>
+          path: <输入数据所在的子路径>
   output_args:                          # 输出类参数
     - name: output-dir
       data_conf:
