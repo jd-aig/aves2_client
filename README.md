@@ -84,82 +84,86 @@ running_spec:
 ```
 # aves2 example pvc
 
-job_name: 'Job名称'
+job_name: 'k8spvc demo'  # 仅在kubernets集群中支持
+debug: true
 namespace: default
-distribute_type: Null  # 可选值: Null, HOROVOD, TF_PS
-image: '运行任务的镜像‘
+distribute_type: Null  # Null, HOROVOD, TF_PS
+image: <镜像地址>
 resource_spec:
   worker:
     count: 1
     cpu: 4
-    mem: 2  # 单位G
-    gpu: 1  # 如果不需要GPU填写0
+    mem: 2  # 2G
+    gpu: 1
 running_spec:
-  source_code:
+  source_code:                          # 源代码相关配置
     storage_mode: K8SPVC
     storage_conf:
-      pvc: 'pvc名称'
-      path: 'pvc中的子路径'
-  envs: []
-  cmd: "python3 main.py"
-  normal_args:  # 普通类型的参数
-    - name: lr
-      value: 0.001
-    - name: batchsize
-      value: 10
-  input_args:  # 输入数据参数
-    - name: train-data
+      pvc: <PVC NAME>
+      path: <代码所在的子路径>
+  envs: []                              # 用户可以设置环境变量
+  cmd: "python3 main.py"                # 启动命令
+  normal_args: []                       # 超参数
+    # - name: batch-size
+    #   value: 64
+    # - name: epochs
+    #   value: 10
+    # - name: lr
+    #   value: 0.01
+  input_args:                           # 输入类参数
+    - name: data-dir
       data_conf:
         storage_mode: K8SPVC
         storage_conf:
-          pvc: 'pvc名称'
-          path: 'pvc中的子路径'
-  output_args:  # 输出数据参数
-    - name: 'output-dir'
+          pvc: <PVC NAME>
+          path: <输入数据所在的子路径>
+  output_args:                          # 输出类参数
+    - name: output-dir
       data_conf:
-        storage_mode: K8SPVC
+        storage_mode: OSSFile
         storage_conf:
-          pvc: 'pvc名称'
-          path: 'pvc中的子路径'
+          path: s3://<输出路径/         # 输出将被保存到对象存储
 ```
 
 ```
 # aves2 example ossfile
 
-job_name: 'Job名称'
-namespace: default
-distribute_type: Null  # 可选值: Null, HOROVOD, TF_PS
-image: '运行任务的镜像'
+job_name: 'ossfile demo'
+debug: true
+distribute_type: Null  # Null, HOROVOD, TF_PS
+image: <镜像地址>
 resource_spec:
   worker:
     count: 1
     cpu: 4
-    mem: 2  # 单位G
-    gpu: 1  # 如果不需要GPU填写0
+    mem: 2  # 2G
+    gpu: 0
 running_spec:
-  source_code:
+  source_code:                          # 源代码相关配置
     storage_mode: OSSFile
     storage_conf:
-      path: s3://xxxxxx/  # 代码路径
-  envs: []
-  cmd: "python3 main.py"
-  normal_args:  # 普通类型的参数
-    - name: lr
-      value: 0.001
-    - name: batchsize
-      value: 10
-  input_args:  # 输入数据参数
-    - name: train-data
+      path: s3://<代码路径>/demo.zip
+  envs: []                              # 用户可以设置环境变量
+  cmd: "python3 main.py"                # 启动命令
+  normal_args: []
+    # - name: batch-size
+    #   value: 64
+    # - name: epochs
+    #   value: 10
+    # - name: lr
+    #   value: 0.01
+  input_args:                           # 输入类参数
+    - name: data-dir
       data_conf:
         storage_mode: OSSFile
         storage_conf:
-          path: s3://xxxxx/train-data/
-  output_args:  # 输出数据参数
+          path: s3://<输入数据集路径>/
+  output_args:                          # 输出类参数
     - name: output-dir
       data_conf:
         storage_mode: OSSFile
         storage_conf:
-          path: s3://xxxx/output/
+          path: s3://<输出路径/
 ```
 
 ### 提交任务
